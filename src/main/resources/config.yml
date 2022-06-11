@@ -1,0 +1,142 @@
+Token: ""
+
+
+ManagementRoles:
+  - 696078834860032060
+  - 638900613031264256
+  - 835896249332269057
+
+
+Auto-Helper:
+  Questions:
+    '1':
+      Messages:
+        - "ip"
+        - "ip?"
+        - "what is ip"
+        - "what is ip?"
+        - "what is server ip"
+        - "what is server ip?"
+        - "what is the server ip"
+        - "what is the server ip?"
+        - "how do i join tea-mc"
+        - "how do i join tea-mc?"
+        - "how do i join server"
+        - "how do i join server?"
+        - "how do i join the server"
+        - "how do i join the server?"
+        - "how connect"
+        - "how connect?"
+        - "how to connect"
+        - "how to connect?"
+        - "how join"
+        - "how join?"
+        - "how to join"
+        - "how to join?"
+      Answer: "You can join the server using **play.tea-mc.com**!"
+    '2':
+      Messages:
+        - "version"
+        - "version?"
+        - "what server version"
+        - "what server version?"
+        - "what is server version"
+        - "what is server version?"
+        - "what is the server version"
+        - "what is the server version?"
+        - "what version to use"
+        - "what version to use?"
+        - "what version should I use"
+        - "what version should I use?"
+      Answer: "You can join the server using **ANY** version! However, it is recommended that you use: **1.16.5 for Skyblock** and **1.8.9 for OP-Factions & KitPvP**."
+
+
+Auto-Mod:
+  MassMention:
+    Max-Mentions: 10 # If user exceeds this amount of mentions in 1 message then they'll get banned from the server.
+  Whitelisted:
+    Domains:
+      - "youtube.com"
+      - "youtu.be"
+      - "tea-mc.com"
+      - "discord.com"
+      - "discordapp.com"
+      - "twitch.tv"
+      - "imgur.com"
+      - "gyazo.com"
+      - "tenor.com"
+      - "giphy.com"
+      - "medal.tv"
+      - "wikipedia.org"
+      - "twitter.com"
+      - "instagram.com"
+      - "reddit.com"
+  Blacklisted:
+    Pages:
+      - "discord.com/invite"
+    Words:
+      - "nigger"
+      - "nigga"
+      - "fucking"
+      - "fuck"
+      - "coon"
+      - "faggot"
+      - "fgt"
+      - "kys"
+
+
+Anti-Purge:
+  Bans:
+    Seconds: 300 # Amount of time in seconds
+    Max-Bans: 5 # Max amount of bans during that time
+  Kicks:
+    Seconds: 300 # Amount of time in seconds
+    Max-Kicks: 5 # Max amount of kicks during that time
+
+
+Captcha:
+  Logs:
+    Server: 623315891051954217 # The server with the logs channel
+    Channel: 652263585363525638 # The channel id that the captcha logs will get sent to
+  Expire:
+    Seconds: 300 # The captcha will expire after 300 seconds (5 minutes)
+  Kick:
+    Tries: 5 # Amount of tries the user gets to solve the captcha
+    Server: 623315891051954217 # Which server the bot will kick the user from if they fail captcha more than 5 times
+
+
+Extra-Logs: # This logs everything, profile picture changes, bio changes, about me changes, joins, leaves, nitro boosts, message deletes, message edits, reaction add & remove
+  Logs:
+    Server: 623315891051954217 # The server with the logs channel
+    Channel: 912822165945085963 # The channel id that the extra logs will get sent to
+
+
+Invites:
+  Track:
+    Server: 623315891051954217 # The server the bot will track the invites of
+  Welcome:
+    Server: 623315891051954217 # The server with the welcome channel
+    Channel: 862688383574343710 # The channel id that the join logs will get sent to
+
+
+Tickets:
+  Transcripts:
+    Server: 623315891051954217 # The server with the transcripts channel
+    Channel: 912822165945085963 # The channel id that the tickets transcripts will get sent to
+  Types:
+    Support:
+      Embed:
+        Title: ":tickets: Create Ticket"
+        Description: "Need assistance? Click the 'Create ticket' button below"
+
+
+Staff:
+  Chat:
+    Server: 835895398286753802 # The server with the staff chat channel
+    Channel: 836172585900703775 # The channel id that the staff messages will get sent to and from
+
+
+Reports:
+  Logs:
+    Server: 623315891051954217 # The server with the logs channel
+    Channel: 652263585363525638 # The channel id that the reports logs will get sent to
