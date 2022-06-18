@@ -1,11 +1,4 @@
-Token: ""
-
-
-ManagementRoles:
-  - 696078834860032060
-  - 638900613031264256
-  - 835896249332269057
-
+Token: "***REMOVED***"
 
 Auto-Helper:
   Questions:
@@ -85,58 +78,109 @@ Auto-Mod:
       - "kys"
 
 
-Anti-Purge:
-  Bans:
-    Seconds: 300 # Amount of time in seconds
-    Max-Bans: 5 # Max amount of bans during that time
-  Kicks:
-    Seconds: 300 # Amount of time in seconds
-    Max-Kicks: 5 # Max amount of kicks during that time
-
-
-Captcha:
-  Logs:
-    Server: 623315891051954217 # The server with the logs channel
-    Channel: 652263585363525638 # The channel id that the captcha logs will get sent to
-  Expire:
-    Seconds: 300 # The captcha will expire after 300 seconds (5 minutes)
-  Kick:
-    Tries: 5 # Amount of tries the user gets to solve the captcha
-    Server: 623315891051954217 # Which server the bot will kick the user from if they fail captcha more than 5 times
-
-
-Extra-Logs: # This logs everything, profile picture changes, bio changes, about me changes, joins, leaves, nitro boosts, message deletes, message edits, reaction add & remove
-  Logs:
-    Server: 623315891051954217 # The server with the logs channel
-    Channel: 912822165945085963 # The channel id that the extra logs will get sent to
-
-
-Invites:
-  Track:
-    Server: 623315891051954217 # The server the bot will track the invites of
-  Welcome:
-    Server: 623315891051954217 # The server with the welcome channel
-    Channel: 862688383574343710 # The channel id that the join logs will get sent to
-
-
 Tickets:
-  Transcripts:
-    Server: 623315891051954217 # The server with the transcripts channel
-    Channel: 912822165945085963 # The channel id that the tickets transcripts will get sent to
   Types:
     Support:
-      Embed:
-        Title: ":tickets: Create Ticket"
-        Description: "Need assistance? Click the 'Create ticket' button below"
-
-
-Staff:
-  Chat:
-    Server: 835895398286753802 # The server with the staff chat channel
-    Channel: 836172585900703775 # The channel id that the staff messages will get sent to and from
-
-
-Reports:
-  Logs:
-    Server: 623315891051954217 # The server with the logs channel
-    Channel: 652263585363525638 # The channel id that the reports logs will get sent to
+      Category: 882644591088635924
+      Button: "Create Ticket"
+      Panel-Embed:
+        Title: "Support Tickets  :tickets:"
+        Description:
+          - "Need assistance? Create a support ticket and one of our staff members will help you as soon as possible!"
+          - ""
+          - "**Valid reasons to open a support ticket:**"
+          - ":question: Questions/Support."
+          - ":gift: Claiming Payouts/Giveaways."
+          - ":exclamation: Player Reports."
+          - ":bug: Bug Reports."
+          - "<:logo:711350804472266833> Anything related to Tea-MC."
+          - ""
+          - "**Notes:**"
+          - ":stopwatch: Staff try to respond to tickets as soon as possible so please refrain from tagging staff members unless its urgent."
+          - ":information_source: You should try to provide as much information as possible so our staff team can give you an instant response, You can send screenshots, videos, gifs, logs, etc."
+      Ticket-Embed:
+        Description:
+          - "**Hello %tag%!**"
+          - ""
+          - "Please describe the reason for your ticket"
+          - "and our staff team will get back to you as soon as possible."
+          - ""
+          - "You can close the ticket by clicking the 'Close Ticket' button below."
+    Applications:
+      Category: 882644621795155980
+      Button: "Create Application"
+      Panel-Embed:
+        Title: "Staff & Builder Applications  :hammer:"
+        Description:
+          - "Tea-MC is always in constant development and we're always looking to expand our team!"
+          - ""
+          - "**Applications Template & Requirements:**"
+          - ":hammer: Staff/Builder Applications: https://tea-mc.com/threads/staff-application-template-open.8/."
+          - ""
+          - "**Please ensure you meet the requirements before creating a ticket - It is also recommended to prepare your application before creating the ticket to reduce wait times. Once ready click the 'Create Application' button below.**"
+          - "**Goodluck with your application!**"
+      Options:
+        Text: "What position are you applying for?"
+        List:
+          Staff:
+            Name: "Staff App"
+            Description: "For staff applications."
+            Emoji: "🔨"
+            Variable:
+              - "**Applications Template & Requirements:**"
+              - ":hammer: Staff Application: https://tea-mc.com/threads/staff-application-template-open.8/."
+          Builder:
+            Name: "Builder App"
+            Description: "For builder applications."
+            Emoji: "👷🏻"
+            Variable:
+              - "**Applications Template & Requirements:**"
+              - ":construction_worker::skin-tone-1: Builder Application: https://tea-mc.com/threads/staff-application-template-open.8/."
+      Ticket-Embed:
+        Description:
+          - "**Hello %tag%!**"
+          - ""
+          - "Thank you for your interest in Tea-MC %option% Team."
+          - ""
+          - "%variable%"
+          - ""
+          - "Please post your application here."
+          - ""
+          - "Keep in mind discord has a 2k character limit so you may need to split it (Unless you have nitro then it is 4k). If you would rather not split it/cut it short, you can use the forums to post the application."
+    Appeals:
+      Category: 882644525552640041
+      Button: "Create Appeal"
+      Panel-Embed:
+        Title: "Punishments Appeals  :hammer:"
+        Description:
+          - "if you have recently been punished (Last 3 months) you may appeal it."
+          - ""
+          - "**Appeal Template:**"
+          - "Username: (Your in-game name)."
+          - "Ban/Mute Reason: (The reason you were banned/muted)."
+          - "Guilty: (Yes/No)."
+          - "Personal Statement: (Use this to express your opinion on why the punishment is incorrect or to admit your wrong doings)."
+          - "Proof: (Only if Not Guilty - Image/Video proof disputing your ban reason)."
+          - ""
+          - "**Please prepare your appeal before opening a ticket to help decrease wait times, once ready click the 'Create Appeal' button below.**"
+          - ""
+          - "**Notes:**"
+          - ":receipt: If you are providing proof, please make sure that it is verifiable by our staff team."
+          - ":negative_squared_cross_mark: You may not appeal the same punishment twice. The staff team decision is final."
+          - ":x: Just because your punishment reason is not specifically included in the rules that doesn't mean its not valid."
+          - ":hammer: Lying in an appeal will cause your appeal to be instantly denied, and if staff time is wasted due to it, your punishment could be further extended upon."
+          - ":red_circle: You should use your personal statement to express your opinion on why your punishment is incorrect or to admit to your wrong doings and explain why we should allow you back onto the network."
+          - ""
+          - "**Goodluck with your appeal! We hope to see you on the network again soon!**"
+      Ticket-Embed:
+        Description:
+          - "**Hello %tag%!**"
+          - ""
+          - "Please ensure that you have used the Punishment Appeal template and that you are honest. If we find you to be dishonest, your appeal will be instantly denied and we might even extend your punishment."
+          - ""
+          - "**Appeal Template:**"
+          - "Username: (Your in-game name)."
+          - "Ban/Mute Reason: (The reason you were banned/muted)."
+          - "Guilty: (Yes/No)."
+          - "Personal Statement: (Use this to express your opinion on why the punishment is incorrect or to admit your wrong doings)."
+          - "Proof: (Only if Not Guilty - Image/Video proof disputing your ban reason)."

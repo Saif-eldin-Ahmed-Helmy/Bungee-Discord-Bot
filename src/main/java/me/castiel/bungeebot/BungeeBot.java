@@ -6,16 +6,32 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.intent.Intent;
+import org.javacord.api.interaction.SlashCommandBuilder;
+import org.javacord.api.interaction.SlashCommandOption;
+import org.javacord.api.interaction.SlashCommandOptionType;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 public class BungeeBot extends Plugin {
 
     private static BungeeBot instance;
+
     public static BungeeBot getInstance() {
         return instance;
     }
 
+    private Settings settings;
+
+    public Settings getSettings() {
+        return settings;
+    }
+
     private DiscordApi api;
+
     public DiscordApi getApi() {
         return api;
     }
@@ -24,10 +40,12 @@ public class BungeeBot extends Plugin {
     public void onEnable() {
         instance = this;
         ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
-            Settings settings = new Settings();
+            settings = new Settings();
+
             getLogger().info("Logging in...");
+
             api = new DiscordApiBuilder()
-                    .setToken(settings.token)
+                    .setToken(settings.getToken())
                     .setIntents
                             (Intent.DIRECT_MESSAGE_REACTIONS, Intent.DIRECT_MESSAGE_TYPING, Intent.DIRECT_MESSAGES,
                                     Intent.GUILD_INTEGRATIONS, Intent.GUILD_BANS, Intent.GUILD_INVITES,
@@ -35,13 +53,55 @@ public class BungeeBot extends Plugin {
                                     Intent.GUILD_MESSAGE_TYPING, Intent.GUILD_MESSAGES, Intent.GUILD_PRESENCES,
                                     Intent.GUILD_VOICE_STATES, Intent.GUILD_WEBHOOKS, Intent.GUILDS)
                     .login().join();
+
             getLogger().info("The bot is connected!");
 
-            AutoHelper autoHelper = new AutoHelper(settings, api);
-            AutoMod autoMod = new AutoMod(settings, api);
-            Captcha captcha = new Captcha(settings, api);
-            Coupons coupons = new Coupons(settings, api);
-            Tickets tickets = new Tickets(settings, api);
+            ProxyServer.getInstance().getScheduler().schedule(this,
+                    () -> api.updateActivity(ActivityType.WATCHING, ProxyServer.getInstance().getPlayers().size() + " Players"), 30L, 30L, TimeUnit.SECONDS);
+
+            api.bulkOverwriteGlobalApplicationCommands(Arrays.asList(
+                            new SlashCommandBuilder().setName("tickets").setDescription("Tickets Commands")
+                                    .setOptions(Arrays.asList(
+                                            SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "create", "Create a tickets panel",
+                                                    Collections.singletonList(
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "type", "Type of ticket panel", true)
+                                                    )),
+                                            SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "transcript", "Generate ticket transcript",
+                                                    Collections.singletonList(
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "ticket-id", "The id of the ticket", true)
+                                                    )))),
+                            new SlashCommandBuilder().setName("coupons").setDescription("Coupons commands")
+                                    .setOptions(Collections.singletonList(
+                                            SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "create", "Create a store coupon",
+                                                    Arrays.asList(
+                                                            SlashCommandOption.create(SlashCommandOptionType.LONG, "amount", "The coupon amount", true),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "reason", "Reason you created the coupon", true)
+                                                    )))),
+                            new SlashCommandBuilder().setName("avatar").setDescription("View the avatar of a user")
+                                    .setOptions(
+                                            Collections.singletonList(
+                                                    SlashCommandOption.create(SlashCommandOptionType.USER, "user", "The discord user", false)
+                                            )),
+                            new SlashCommandBuilder().setName("clear").setDescription("Delete a certain amount of messages in the channel")
+                                    .setOptions(
+                                            Collections.singletonList(
+                                                    SlashCommandOption.create(SlashCommandOptionType.LONG, "amount", "The amount of messages you want to delete", true)
+                                            )),
+                            new SlashCommandBuilder().setName("captcha").setDescription("Captcha commands")
+                                    .setOptions(Collections.singletonList(
+                                            SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "create", "Create a captcha panel")
+                                    ))))
+                    .join();
+
+            getLogger().info("Registered all slash commands!");
+
+            AutoHelper autoHelper = new AutoHelper(api);
+            AutoMod autoMod = new AutoMod(api);
+            Avatar avatar = new Avatar(api);
+            Captcha captcha = new Captcha(api);
+            Clear clear = new Clear(api);
+            Coupons coupons = new Coupons(api);
+            Tickets tickets = new Tickets(api);
         });
         getLogger().info("Plugin loaded!");
     }

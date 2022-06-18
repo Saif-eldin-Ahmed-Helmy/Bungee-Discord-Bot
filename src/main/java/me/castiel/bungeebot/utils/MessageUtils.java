@@ -1,15 +1,18 @@
 package me.castiel.bungeebot.utils;
 
-import org.javacord.api.entity.message.embed.Embed;
+import java.util.Optional;
 
 public final class MessageUtils {
 
-    public static void logMessage(Embed embed) {
-
-    }
-
-    public static void logMessage(String message) {
-
+    public static Optional<String> parseDomain(String word) {
+        String link = word.split("/")[0];
+        int sub = link.startsWith("https://") ? 8 : word.startsWith("http://") ? 7 : 0;
+        String[] split = link.split("\\.");
+        if (split.length == 3) sub += split[0].length() + 1;
+        if (sub > 0 || split.length >= 2) {
+            return Optional.of(word.substring(sub));
+        }
+        return Optional.empty();
     }
 
     public static String stripMessage(String message) {

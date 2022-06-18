@@ -1,45 +1,29 @@
 package me.castiel.bungeebot.modules;
 
-import me.castiel.bungeebot.configs.Settings;
+import me.castiel.bungeebot.types.Module;
+import me.castiel.bungeebot.types.Question;
 import me.castiel.bungeebot.utils.MessageUtils;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.message.Message;
 
-import java.util.List;
+public class AutoHelper extends Module {
 
-public class AutoHelper {
-
-    public AutoHelper(Settings settings, DiscordApi api) {
-        answerQuestions(settings, api);
+    public AutoHelper(DiscordApi api) {
+        answerQuestions(api);
     }
 
-    private void answerQuestions(Settings settings, DiscordApi api) {
+    private void answerQuestions(DiscordApi api) {
         api.addMessageCreateListener(event -> {
+            if (!event.isServerMessage() || !event.getMessageAuthor().isRegularUser())
+                return;
+            Message discordMessage = event.getMessage();
             String message = MessageUtils.stripMessage(event.getMessageContent());
-            for (Question question : settings.questions) {
+            for (Question question : getSettings().getQuestions()) {
                 if (question.getMessages().stream().anyMatch(s -> s.equalsIgnoreCase(message))) {
-                    event.getMessage().reply(question.getAnswer());
+                    discordMessage.reply(question.getAnswer());
                     return;
                 }
             }
         });
-    }
-
-    public static class Question {
-
-        private final List<String> messages;
-        private final String answer;
-
-        public Question(List<String> messages, String answer) {
-            this.messages = messages;
-            this.answer = answer;
-        }
-
-        public List<String> getMessages() {
-            return messages;
-        }
-
-        public String getAnswer() {
-            return answer;
-        }
     }
 }

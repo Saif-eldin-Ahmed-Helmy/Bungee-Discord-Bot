@@ -1,5 +1,7 @@
 package me.castiel.bungeebot.utils;
 
+import me.castiel.bungeebot.types.Dimensions;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -25,7 +27,7 @@ public final class ImageUtils {
     public static InputStream createCaptchaImage(String placeholderText, String captchaText) {
         Font captchaFont = new Font("Consolas", Font.PLAIN, 48);
         Font placeholderFont = new Font("Consolas", Font.PLAIN, 22);
-        ImageUtils.Dimensions dimensions = ImageUtils.getTextDimensions(captchaText, captchaFont);
+        Dimensions dimensions = getTextDimensions(captchaText, captchaFont);
         BufferedImage image = new BufferedImage(dimensions.width + 250, dimensions.height + 100, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics2D = image.createGraphics();
         graphics2D.setFont(captchaFont);
@@ -77,17 +79,6 @@ public final class ImageUtils {
             return new ByteArrayInputStream(os.toByteArray());
         } catch (IOException ignored) {
             return null;
-        }
-    }
-
-    public static class Dimensions {
-
-        public final int width, height, ascent;
-
-        public Dimensions(int width, int height, int ascent) {
-            this.width = width;
-            this.height = height;
-            this.ascent = ascent;
         }
     }
 }
