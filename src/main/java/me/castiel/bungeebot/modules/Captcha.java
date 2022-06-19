@@ -42,7 +42,7 @@ public class Captcha {
                     .addField("How to verify?", ":black_square_button: Click the 'Verify' button below in order to start the verification process.");
             new MessageBuilder()
                     .addEmbed(embed)
-                    .addActionRow(Button.success("captcha", "Verify", "\uD83D\uDD11"))
+                    .addActionRow(Button.success("captcha", "Verify", "🔑"))
                     .send(textChannel).join();
         }));
     }
