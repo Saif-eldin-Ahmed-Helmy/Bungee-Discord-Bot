@@ -44,6 +44,7 @@ public class Settings {
             List<String> ticketEmbedDescription = ticketsSection.getStringList(type + ".Ticket-Embed.Description");
 
             CustomEmbedBuilder ticketEmbed = new CustomEmbedBuilder();
+            ticketEmbed.setUrl("https://tea-mc.com");
             ticketEmbed.setTitle(ticketsSection.getString(type + ".Ticket-Embed.Title", null));
             ticketEmbed.setDescription(ticketEmbedDescription);
 
@@ -75,7 +76,7 @@ public class Settings {
             }
             String button = ticketsSection.getString(type + ".Button");
             Long category = ticketsSection.getLong(type + ".Category");
-            Ticket ticket = new Ticket(type.toLowerCase(), button, category, panelEmbed, ticketEmbed, option);
+            Ticket ticket = new Ticket(type, button, category, panelEmbed, ticketEmbed, option);
             tickets.add(ticket);
         }
         whitelistedDomains = config.getStringList("Auto-Mod.Whitelisted.Domains");

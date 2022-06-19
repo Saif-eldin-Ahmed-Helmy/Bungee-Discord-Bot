@@ -44,16 +44,18 @@ public class CustomEmbedBuilder {
         return title;
     }
 
-    public void setTitle(String title) {
+    public CustomEmbedBuilder setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public CustomEmbedBuilder setDescription(String description) {
         this.description = description;
+        return this;
     }
 
     public void setDescription(List<String> descriptions) {
@@ -61,8 +63,16 @@ public class CustomEmbedBuilder {
             return;
         StringBuilder stringBuilder = new StringBuilder();
         for (String line : descriptions) stringBuilder.append(line).append("\n");
-        if (stringBuilder.toString().endsWith("\n")) stringBuilder.delete(stringBuilder.length() - 3, stringBuilder.length() - 1);
         setDescription(stringBuilder.toString());
+    }
+
+    public CustomEmbedBuilder copy(CustomEmbedBuilder customEmbedBuilder) {
+        setAuthor(customEmbedBuilder.getAuthor());
+        setAuthorUrl(customEmbedBuilder.getAuthorUrl());
+        setAuthorImage(customEmbedBuilder.getAuthorImage());
+        setTitle(customEmbedBuilder.getTitle());
+        setDescription(customEmbedBuilder.getDescription());
+        return this;
     }
 
     public EmbedBuilder buildEmbed() {

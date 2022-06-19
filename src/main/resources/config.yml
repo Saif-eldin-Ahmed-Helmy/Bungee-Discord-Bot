@@ -99,9 +99,8 @@ Tickets:
           - ":stopwatch: Staff try to respond to tickets as soon as possible so please refrain from tagging staff members unless its urgent."
           - ":information_source: You should try to provide as much information as possible so our staff team can give you an instant response, You can send screenshots, videos, gifs, logs, etc."
       Ticket-Embed:
+        Title: "Hello %name%!  <:TeaMC:673883531541348352>"
         Description:
-          - "**Hello %tag%!**"
-          - ""
           - "Please describe the reason for your ticket"
           - "and our staff team will get back to you as soon as possible."
           - ""
@@ -137,9 +136,8 @@ Tickets:
               - "**Applications Template & Requirements:**"
               - ":construction_worker::skin-tone-1: Builder Application: https://tea-mc.com/threads/staff-application-template-open.8/."
       Ticket-Embed:
+        Title: "Hello %name%!  <:TeaMC:673883531541348352>"
         Description:
-          - "**Hello %tag%!**"
-          - ""
           - "Thank you for your interest in Tea-MC %option% Team."
           - ""
           - "%variable%"
@@ -167,15 +165,14 @@ Tickets:
           - "**Notes:**"
           - ":receipt: If you are providing proof, please make sure that it is verifiable by our staff team."
           - ":negative_squared_cross_mark: You may not appeal the same punishment twice. The staff team decision is final."
-          - ":x: Just because your punishment reason is not specifically included in the rules that doesn't mean its not valid."
+          - ":x: Just because your punishment reason is not specifically included in the rules that doesn't mean its invalid."
           - ":hammer: Lying in an appeal will cause your appeal to be instantly denied, and if staff time is wasted due to it, your punishment could be further extended upon."
           - ":red_circle: You should use your personal statement to express your opinion on why your punishment is incorrect or to admit to your wrong doings and explain why we should allow you back onto the network."
           - ""
           - "**Goodluck with your appeal! We hope to see you on the network again soon!**"
       Ticket-Embed:
+        Title: "Hello %name%!  <:TeaMC:673883531541348352>"
         Description:
-          - "**Hello %tag%!**"
-          - ""
           - "Please ensure that you have used the Punishment Appeal template and that you are honest. If we find you to be dishonest, your appeal will be instantly denied and we might even extend your punishment."
           - ""
           - "**Appeal Template:**"

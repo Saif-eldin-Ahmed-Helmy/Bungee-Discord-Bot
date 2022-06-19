@@ -38,10 +38,16 @@ public class Ticket {
         return panelEmbed;
     }
 
-    public EmbedBuilder getTicketEmbed(String tag) {
-        ticketEmbed.setDescription(ticketEmbed.getDescription()
-                .replace("%tag%", tag));
-        return ticketEmbed.buildEmbed();
+    public EmbedBuilder getTicketEmbed(String tag, String name) {
+        return new CustomEmbedBuilder()
+                .copy(ticketEmbed)
+                .setTitle(ticketEmbed.getTitle()
+                        .replace("%tag%", tag)
+                        .replace("%name%", name))
+                .setDescription(ticketEmbed.getDescription()
+                        .replace("%tag%", tag)
+                        .replace("%name%", name))
+                .buildEmbed();
     }
 
     public Optional<Option> getOption() {
