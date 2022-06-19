@@ -186,7 +186,7 @@ public class Tickets extends Module {
                             List<LowLevelComponent> lowLevelComponents = actionRow.getComponents();
                             if (!added) {
                                 added = true;
-                                lowLevelComponents.add(Button.secondary("pass-" + uid + "-" + password, user.getName(), "\uD83D\uDCF0"));
+                                lowLevelComponents.add(Button.secondary("pass-" + uid + "-" + password, user.getName(), "📰"));
                             }
                             messageUpdater.addComponents(ActionRow.of(lowLevelComponents));
                         } else {
@@ -196,7 +196,7 @@ public class Tickets extends Module {
 
                     if (!added && message.getComponents().size() < 5) {
                         added = true;
-                        messageUpdater.addComponents(ActionRow.of(Button.secondary("pass-" + uid + "-" + password, user.getName(), "\uD83D\uDCF0")));
+                        messageUpdater.addComponents(ActionRow.of(Button.secondary("pass-" + uid + "-" + password, user.getName(), "📰")));
                     }
 
                     if (!added)
