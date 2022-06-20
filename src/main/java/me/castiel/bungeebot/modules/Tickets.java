@@ -141,6 +141,9 @@ public class Tickets extends Module {
     private void createTicketGetTranscriptButton(DiscordApi api) {
         api.addButtonClickListener(event -> {
             ButtonInteraction buttonInteraction = event.getButtonInteraction();
+            User user = buttonInteraction.getUser();
+            if (user.isBot() || !DiscordUtils.hasPermission("ticket", user))
+                return;
             String customId = buttonInteraction.getCustomId();
             Message message = buttonInteraction.getMessage();
             if (customId.startsWith("pass-")) {
@@ -164,8 +167,10 @@ public class Tickets extends Module {
     private void createTicketTranscriptButton(DiscordApi api) {
         api.addButtonClickListener(event -> {
             ButtonInteraction buttonInteraction = event.getButtonInteraction();
-            String customId = buttonInteraction.getCustomId();
             User user = buttonInteraction.getUser();
+            if (user.isBot() || !DiscordUtils.hasPermission("ticket", user))
+                return;
+            String customId = buttonInteraction.getCustomId();
             Message message = buttonInteraction.getMessage();
             if (customId.startsWith("transcript-")) {
                 buttonInteraction.acknowledge();
@@ -301,8 +306,13 @@ public class Tickets extends Module {
                                 .addField("Ticket Name", serverTextChannel.getName())
                                 .addField("Ticket Category", ticket.getCategory())
                                 .addField("Ticket Open Date", "<t:" + ticket.getOpenDate() + ":f>")
-                                .addField("Ticket Creator", ticket.getCreatorName() + " (" + ticket.getCreatorID() + ")")
-                                .addField("Participants", gson.toJson(ticket.getParticipantsNames()));
+                                .addField("Ticket Creator", ticket.getCreatorName() + " (" + ticket.getCreatorID() + ")");
+
+                        if (ticket.getParticipantsNames().size() > 0) {
+                            String participants = gson.toJson(ticket.getParticipantsNames());
+                            embedBuilder.addField("Participants", participants
+                                    .substring(1, participants.length() - 1));
+                        }
 
                         new MessageBuilder()
                                 .setEmbed(embedBuilder)

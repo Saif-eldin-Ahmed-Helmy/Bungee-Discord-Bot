@@ -51,15 +51,15 @@ public final class HttpUtils {
             SSLContext sslContext = SSLContexts.custom().loadTrustMaterial((chain, authType) -> true).build();
             HostnameVerifier hostnameVerifier = new NoopHostnameVerifier();
             SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
-            CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslConnectionSocketFactory).build();
-            HttpPost httppost = new HttpPost(link);
+            CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(sslConnectionSocketFactory).build();
+            HttpPost httpPost = new HttpPost(link);
             List<NameValuePair> params = new ArrayList<>();
             for (Map.Entry<String, String> entry : keys.entrySet()) {
                 params.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
               //  System.out.println(entry.getKey() + " | " + entry.getValue());
             }
-            httppost.setEntity(new UrlEncodedFormEntity(params));
-            HttpResponse response = httpclient.execute(httppost);
+            httpPost.setEntity(new UrlEncodedFormEntity(params));
+            HttpResponse response = httpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
 
             if (entity != null) {

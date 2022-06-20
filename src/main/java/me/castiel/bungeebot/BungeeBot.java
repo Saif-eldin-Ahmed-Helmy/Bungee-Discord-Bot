@@ -93,6 +93,23 @@ public class BungeeBot extends Plugin {
                                                             SlashCommandOption.create(SlashCommandOptionType.LONG, "amount", "The coupon amount", true),
                                                             SlashCommandOption.create(SlashCommandOptionType.STRING, "reason", "Reason you created the coupon", true)
                                                     )))),
+                            new SlashCommandBuilder().setName("embed").setDescription("Embed commands")
+                                    .setOptions(Arrays.asList(
+                                            SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "parse", "Parse multi-line text"),
+                                            SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "create", "Create an embed",
+                                                    Arrays.asList(
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "color", "The color of the embed (e.x. WHITE)", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "author", "The author of the embed", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "author_url", "The author URL", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "author_image", "The image of the author", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "url", "The embed url", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "title", "The embed title", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "description", "The embed description", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "image", "The embed image", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "thumbnail", "The embed thumbnail", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "footer", "The embed footer", false),
+                                                            SlashCommandOption.create(SlashCommandOptionType.STRING, "footer_image", "The embed footer image", false)
+                                                    )))),
                             new SlashCommandBuilder().setName("avatar").setDescription("View the avatar of a user")
                                     .setOptions(
                                             Collections.singletonList(
@@ -117,6 +134,8 @@ public class BungeeBot extends Plugin {
             Captcha captcha = new Captcha(api);
             Clear clear = new Clear(api);
             Coupons coupons = new Coupons(api);
+            Embed embed = new Embed(api);
+            ExtraLogs extraLogs = new ExtraLogs(api);
             Tickets tickets = new Tickets(api);
         });
         getLogger().info("Plugin loaded!");

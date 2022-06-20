@@ -36,17 +36,16 @@ public class Settings {
         tickets = new ArrayList<>();
         Configuration ticketsSection = config.getSection("Tickets.Types");
         for (String type : ticketsSection.getKeys()) {
-            CustomEmbedBuilder panelEmbed = new CustomEmbedBuilder();
-            panelEmbed.setUrl("https://tea-mc.com");
-            panelEmbed.setTitle(ticketsSection.getString(type + ".Panel-Embed.Title", null));
-            panelEmbed.setDescription(ticketsSection.getStringList(type + ".Panel-Embed.Description"));
+            CustomEmbedBuilder panelEmbed = new CustomEmbedBuilder()
+                    .setUrl("https://tea-mc.com")
+                    .setTitle(ticketsSection.getString(type + ".Panel-Embed.Title", null))
+                    .setDescription(ticketsSection.getStringList(type + ".Panel-Embed.Description"));
 
             List<String> ticketEmbedDescription = ticketsSection.getStringList(type + ".Ticket-Embed.Description");
-
-            CustomEmbedBuilder ticketEmbed = new CustomEmbedBuilder();
-            ticketEmbed.setUrl("https://tea-mc.com");
-            ticketEmbed.setTitle(ticketsSection.getString(type + ".Ticket-Embed.Title", null));
-            ticketEmbed.setDescription(ticketEmbedDescription);
+            CustomEmbedBuilder ticketEmbed = new CustomEmbedBuilder()
+                    .setUrl("https://tea-mc.com")
+                    .setTitle(ticketsSection.getString(type + ".Ticket-Embed.Title", null))
+                    .setDescription(ticketEmbedDescription);
 
             Option option = null;
             String optionsText = ticketsSection.getString(type + ".Options.Text", null);

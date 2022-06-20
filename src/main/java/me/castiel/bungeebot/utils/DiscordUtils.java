@@ -24,7 +24,7 @@ public final class DiscordUtils {
 
     public static boolean hasPermission(String command, User user) {
         Optional<Server> optionalServer = BungeeBot.getInstance().getApi().getServerById(623315891051954217L);
-        if (!optionalServer.isPresent())
+        if (optionalServer.isEmpty())
             return false;
         Server server = optionalServer.get();
         return server.getRoles(user).stream().anyMatch(role -> managementRoles.contains(role.getId()));
@@ -40,7 +40,7 @@ public final class DiscordUtils {
             highLevelComponent.asActionRow().ifPresent(actionRow -> {
                 for (LowLevelComponent lowLevelComponent : actionRow.getComponents()) {
                     lowLevelComponent.asButton().ifPresent(button -> {
-                        if (!button.getLabel().isPresent() || !button.getLabel().get().equals(name)) {
+                        if (button.getLabel().isEmpty() || !button.getLabel().get().equals(name)) {
                             ButtonBuilder buttonBuilder = new ButtonBuilder()
                                     .copy(button)
                                     .setDisabled(true);
