@@ -26,9 +26,10 @@ public class Option {
         return selectMenu;
     }
 
-    public EmbedBuilder getMenuEmbed(String tag, String type) {
+    public EmbedBuilder getMenuEmbed(String tag, String name, String type) {
         CustomEmbedBuilder customEmbedBuilder = menuEmbeds.get(type);
         customEmbedBuilder.setDescription(customEmbedBuilder.getDescription()
+                .replace("%name%", name)
                 .replace("%tag%", tag));
         return customEmbedBuilder.buildEmbed();
     }

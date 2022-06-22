@@ -52,10 +52,11 @@ public class Settings {
             if (optionsText != null) {
                 List<SelectMenuOption> selectMenuOptions = new ArrayList<>();
                 HashMap<String, CustomEmbedBuilder> menus = new HashMap<>();
-                for (String t : ticketsSection.getSection(type + ".Options.List").getKeys()) {
-                    String name = ticketsSection.getString(type + ".Options.List." + t + ".Name");
-                    String description = ticketsSection.getString(type + ".Options.List." + t + ".Description");
-                    String emojiUnicode = ticketsSection.getString(type + ".Options.List." + t + ".Emoji");
+                Configuration optionsSection = ticketsSection.getSection(type + ".Options.List");
+                for (String t : optionsSection.getKeys()) {
+                    String name = optionsSection.getString(t + ".Name");
+                    String description = optionsSection.getString(t + ".Description");
+                    String emojiUnicode = optionsSection.getString(t + ".Emoji");
                     selectMenuOptions.add(SelectMenuOption.create(name, t.toLowerCase(), description, DiscordUtils.getEmoji(emojiUnicode)));
                     CustomEmbedBuilder menuEmbedBuilder = new CustomEmbedBuilder();
                     StringBuilder stringBuilder = new StringBuilder();
@@ -66,7 +67,8 @@ public class Settings {
                             if (stringBuilder.toString().endsWith("\n"))
                                 stringBuilder.delete(stringBuilder.length() - 3, stringBuilder.length() - 1);
                         } else stringBuilder.append(line).append("\n");
-                        menuEmbedBuilder.setDescription(stringBuilder.toString());
+                        menuEmbedBuilder.setDescription(stringBuilder.toString()
+                                .replace("%option%", t));
                     }
                     menus.put(t.toLowerCase(), menuEmbedBuilder);
                 }
@@ -75,7 +77,8 @@ public class Settings {
             }
             String button = ticketsSection.getString(type + ".Button");
             Long category = ticketsSection.getLong(type + ".Category");
-            Ticket ticket = new Ticket(type, button, category, panelEmbed, ticketEmbed, option);
+            List<Long> supportRoles = ticketsSection.getLongList(type + ".Support-Roles");
+            Ticket ticket = new Ticket(type, button, category, supportRoles, panelEmbed, ticketEmbed, option);
             tickets.add(ticket);
         }
         whitelistedDomains = config.getStringList("Auto-Mod.Whitelisted.Domains");

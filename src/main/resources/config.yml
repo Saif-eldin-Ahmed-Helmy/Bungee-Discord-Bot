@@ -82,6 +82,8 @@ Tickets:
   Types:
     Support:
       Category: 882644591088635924
+      Support-Roles:
+        - 696078834860032060
       Button: "Create Ticket"
       Panel-Embed:
         Title: "Support Tickets  :tickets:"
@@ -107,6 +109,8 @@ Tickets:
           - "You can close the ticket by clicking the 'Close Ticket' button below."
     Applications:
       Category: 882644621795155980
+      Support-Roles:
+        - 696078834860032060
       Button: "Create Application"
       Panel-Embed:
         Title: "Staff & Builder Applications  :hammer:"
@@ -122,6 +126,7 @@ Tickets:
         Text: "What position are you applying for?"
         List:
           Staff:
+            Support-Roles: []
             Name: "Staff App"
             Description: "For staff applications."
             Emoji: "🔨"
@@ -129,6 +134,8 @@ Tickets:
               - "**Applications Template & Requirements:**"
               - ":hammer: Staff Application: https://tea-mc.com/threads/staff-application-template-open.8/."
           Builder:
+            Support-Roles:
+              - 656473633161609216
             Name: "Builder App"
             Description: "For builder applications."
             Emoji: "👷🏻"
@@ -144,9 +151,12 @@ Tickets:
           - ""
           - "Please post your application here."
           - ""
-          - "Keep in mind discord has a 2k character limit so you may need to split it (Unless you have nitro then it is 4k). If you would rather not split it/cut it short, you can use the forums to post the application."
+          - "Keep in mind discord has a 2k character limit so you may need to split it (Unless you have nitro then it is 4k)."
     Appeals:
       Category: 882644525552640041
+      Support-Roles:
+        - 696078834860032060
+        - 883683061311610880
       Button: "Create Appeal"
       Panel-Embed:
         Title: "Punishments Appeals  :hammer:"

@@ -3,20 +3,23 @@ package me.castiel.bungeebot.types;
 import me.castiel.bungeebot.utils.CustomEmbedBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 
+import java.util.List;
 import java.util.Optional;
 
 public class Ticket {
 
     private final String type, button;
     private final Long category;
+    private final List<Long> supportRoles;
     private final CustomEmbedBuilder panelEmbed;
     private final CustomEmbedBuilder ticketEmbed;
     private final Option option;
 
-    public Ticket(String type, String button, Long category, CustomEmbedBuilder panelEmbed, CustomEmbedBuilder ticketEmbed, Option option) {
+    public Ticket(String type, String button, Long category, List<Long> supportRoles, CustomEmbedBuilder panelEmbed, CustomEmbedBuilder ticketEmbed, Option option) {
         this.type = type;
         this.button = button;
         this.category = category;
+        this.supportRoles = supportRoles;
         this.panelEmbed = panelEmbed;
         this.ticketEmbed = ticketEmbed;
         this.option = option;
@@ -32,6 +35,10 @@ public class Ticket {
 
     public Long getCategory() {
         return category;
+    }
+
+    public List<Long> getSupportRoles() {
+        return supportRoles;
     }
 
     public CustomEmbedBuilder getPanelEmbed() {

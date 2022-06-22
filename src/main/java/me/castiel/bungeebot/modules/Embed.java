@@ -3,9 +3,11 @@ package me.castiel.bungeebot.modules;
 import me.castiel.bungeebot.utils.CustomEmbedBuilder;
 import me.castiel.bungeebot.utils.DiscordUtils;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.interaction.SlashCommandInteractionOption;
+import org.javacord.api.interaction.callback.InteractionCallbackDataFlag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ public class Embed {
         api.addSlashCommandCreateListener(event -> {
             SlashCommandInteraction slashCommandInteraction = event.getSlashCommandInteraction();
             User user = slashCommandInteraction.getUser();
-            if (!slashCommandInteraction.getOptionByName("parse").isPresent()
+            if (slashCommandInteraction.getOptionByName("parse").isEmpty()
                     || !slashCommandInteraction.getCommandName().equalsIgnoreCase("embed")
                     || user.isBot()
                     || !DiscordUtils.hasPermission("embed", user))
@@ -50,7 +52,7 @@ public class Embed {
         api.addSlashCommandCreateListener(event -> {
             SlashCommandInteraction slashCommandInteraction = event.getSlashCommandInteraction();
             User user = slashCommandInteraction.getUser();
-            if (!slashCommandInteraction.getOptionByName("create").isPresent()
+            if (slashCommandInteraction.getOptionByName("create").isEmpty()
                     || !slashCommandInteraction.getCommandName().equalsIgnoreCase("embed")
                     || user.isBot()
                     || !DiscordUtils.hasPermission("embed", user))
@@ -74,8 +76,12 @@ public class Embed {
                 });
             }
             slashCommandInteraction.createImmediateResponder()
-                    .addEmbed(customEmbedBuilder.buildEmbed())
+                    .setContent("OK")
+                    .setFlags(InteractionCallbackDataFlag.EPHEMERAL)
                     .respond();
+            slashCommandInteraction.getChannel().ifPresent(textChannel -> new MessageBuilder()
+                    .setEmbed(customEmbedBuilder.buildEmbed())
+                    .send(textChannel));
         });
     }
 }

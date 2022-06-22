@@ -19,6 +19,8 @@ public class Avatar {
                 return;
             User target = slashCommandInteraction.getArguments().size() == 0 ? user : slashCommandInteraction.getArguments().get(0).getUserValue().orElse(user);
             EmbedBuilder embedBuilder = new EmbedBuilder()
+                    .setAuthor(target)
+                    .setTitle(target.getName() + "'s Avatar")
                     .setImage(target.getAvatar(2048));
             slashCommandInteraction.createImmediateResponder()
                     .addEmbed(embedBuilder)

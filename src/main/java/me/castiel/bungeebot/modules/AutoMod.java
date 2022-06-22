@@ -1,6 +1,7 @@
 package me.castiel.bungeebot.modules;
 
 import me.castiel.bungeebot.types.Module;
+import me.castiel.bungeebot.utils.DiscordUtils;
 import me.castiel.bungeebot.utils.MessageUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
@@ -14,39 +15,51 @@ public class AutoMod extends Module {
 
     private void moderateMessages(DiscordApi api) {
         api.addMessageCreateListener(event -> event.getMessageAuthor().asUser().ifPresent(user -> {
-            Message discordMessage = event.getMessage();
-            String message = MessageUtils.stripMessage(event.getMessageContent());
-            if (!event.isServerMessage() || !event.getMessageAuthor().isRegularUser())
+            if (DiscordUtils.hasPermission("automod", user))
                 return;
-            for (String word : message.split(" ")) {
-                if (isBlackListedLink(word)) {
-                    discordMessage.reply(user.getMentionTag() + " You can't post that link.");
-                    discordMessage.delete("Posted the link " + word + ".");
-                }
-                if (isBlackListedWord(word)) {
-                    discordMessage.reply(user.getMentionTag() + " Swearing is not allowed.");
-                    discordMessage.delete("Said the word: " + word + ".");
+            event.getServer().ifPresent(server -> {
+                if (server.getId() != 623315891051954217L)
                     return;
+                Message discordMessage = event.getMessage();
+                String message = MessageUtils.stripMessage(event.getMessageContent());
+                if (!event.isServerMessage() || !event.getMessageAuthor().isRegularUser())
+                    return;
+                for (String word : message.split(" ")) {
+                    if (isBlackListedLink(word)) {
+                        discordMessage.reply(user.getMentionTag() + " You can't post that link.");
+                        discordMessage.delete("Posted the link " + word + ".");
+                    }
+                    if (isBlackListedWord(word)) {
+                        discordMessage.reply(user.getMentionTag() + " Swearing is not allowed.");
+                        discordMessage.delete("Said the word: " + word + ".");
+                        return;
+                    }
                 }
-            }
+            });
         }));
         api.addMessageEditListener(event -> event.getMessage().ifPresent(discordMessage -> discordMessage.getAuthor().asUser().ifPresent(user -> {
-            String message = MessageUtils.stripMessage(event.getNewContent());
-            if (!discordMessage.isServerMessage() || user.isBot())
+            if (DiscordUtils.hasPermission("automod", user))
                 return;
-            for (String word : message.split(" ")) {
-                if (isBlackListedLink(word)) {
-                    discordMessage.reply(user.getMentionTag() + " You can't post that link.");
-                    discordMessage.delete("Posted the link " + word + ".");
+            event.getServer().ifPresent(server -> {
+                if (server.getId() != 623315891051954217L)
                     return;
-                }
-                if (isBlackListedWord(word)) {
-                    discordMessage.reply(user.getMentionTag() + " Swearing is not allowed.");
-                    discordMessage.delete("Said the word: " + word + ".");
+                String message = MessageUtils.stripMessage(event.getNewContent());
+                if (!discordMessage.isServerMessage() || user.isBot())
                     return;
+                for (String word : message.split(" ")) {
+                    if (isBlackListedLink(word)) {
+                        discordMessage.reply(user.getMentionTag() + " You can't post that link.");
+                        discordMessage.delete("Posted the link " + word + ".");
+                        return;
+                    }
+                    if (isBlackListedWord(word)) {
+                        discordMessage.reply(user.getMentionTag() + " Swearing is not allowed.");
+                        discordMessage.delete("Said the word: " + word + ".");
+                        return;
+                    }
                 }
-            }
-    })));
+            });
+        })));
     }
 
     private boolean isBlackListedLink(String word) {
@@ -65,8 +78,10 @@ public class AutoMod extends Module {
 
     private void moderateMassMentions(DiscordApi api) {
         api.addMessageCreateListener(event -> event.getServer().ifPresent(server -> event.getMessageAuthor().asUser().ifPresent(user -> {
+            if (DiscordUtils.hasPermission("automod", user))
+                return;
             Message message = event.getMessage();
-            if (!event.isServerMessage() && event.getMessageAuthor().isRegularUser())
+            if (!event.isServerMessage() || server.getId() != 623315891051954217L && event.getMessageAuthor().isRegularUser())
                 return;
             if (message.getMentionedUsers().size() >= 10) {
                 message.delete();

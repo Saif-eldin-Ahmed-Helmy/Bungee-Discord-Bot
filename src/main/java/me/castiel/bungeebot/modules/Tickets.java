@@ -11,6 +11,7 @@ import me.castiel.bungeebot.utils.MessageUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.MessageUpdater;
@@ -18,6 +19,7 @@ import org.javacord.api.entity.message.component.*;
 import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
+import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.ButtonInteraction;
@@ -54,7 +56,7 @@ public class Tickets extends Module {
         api.addSlashCommandCreateListener(event -> event.getSlashCommandInteraction().getChannel().flatMap(Channel::asServerTextChannel).ifPresent(serverTextChannel -> {
             SlashCommandInteraction slashCommandInteraction = event.getSlashCommandInteraction();
             User user = slashCommandInteraction.getUser();
-            if (!slashCommandInteraction.getOptionByName("add").isPresent()
+            if (slashCommandInteraction.getOptionByName("add").isEmpty()
                     || !slashCommandInteraction.getCommandName().equalsIgnoreCase("ticket")
                     || user.isBot()
                     || !DiscordUtils.hasPermission("ticket", user))
@@ -101,7 +103,7 @@ public class Tickets extends Module {
         api.addSlashCommandCreateListener(event -> event.getSlashCommandInteraction().getChannel().flatMap(Channel::asServerTextChannel).ifPresent(serverTextChannel -> {
             SlashCommandInteraction slashCommandInteraction = event.getSlashCommandInteraction();
             User user = slashCommandInteraction.getUser();
-            if (!slashCommandInteraction.getOptionByName("remove").isPresent()
+            if (slashCommandInteraction.getOptionByName("remove").isEmpty()
                     || !slashCommandInteraction.getCommandName().equalsIgnoreCase("ticket")
                     || user.isBot()
                     || !DiscordUtils.hasPermission("ticket", user))
@@ -184,7 +186,7 @@ public class Tickets extends Module {
 
                     for (HighLevelComponent highLevelComponent : message.getComponents()) {
                         Optional<ActionRow> optionalActionRow = highLevelComponent.asActionRow();
-                        if (!optionalActionRow.isPresent())
+                        if (optionalActionRow.isEmpty())
                             continue;
                         ActionRow actionRow = optionalActionRow.get();
                         if (actionRow.getComponents().size() < 5) {
@@ -218,7 +220,7 @@ public class Tickets extends Module {
         api.addSlashCommandCreateListener(event -> event.getSlashCommandInteraction().getChannel().ifPresent(textChannel -> {
             SlashCommandInteraction slashCommandInteraction = event.getSlashCommandInteraction();
             User user = slashCommandInteraction.getUser();
-            if (!slashCommandInteraction.getOptionByName("transcript").isPresent()
+            if (slashCommandInteraction.getOptionByName("transcript").isEmpty()
                     || !slashCommandInteraction.getCommandName().equalsIgnoreCase("ticket")
                     || user.isBot()
                     || !DiscordUtils.hasPermission("ticket", user))
@@ -235,7 +237,7 @@ public class Tickets extends Module {
         api.addSlashCommandCreateListener(event -> event.getSlashCommandInteraction().getChannel().ifPresent(textChannel -> {
             SlashCommandInteraction slashCommandInteraction = event.getSlashCommandInteraction();
             User user = slashCommandInteraction.getUser();
-            if (!slashCommandInteraction.getOptionByName("create").isPresent()
+            if (slashCommandInteraction.getOptionByName("create").isEmpty()
                     || !slashCommandInteraction.getCommandName().equalsIgnoreCase("ticket")
                     || user.isBot()
                     || !DiscordUtils.hasPermission("ticket", user))
@@ -245,6 +247,7 @@ public class Tickets extends Module {
                 if (type.equalsIgnoreCase(ticket.getType())) {
                     slashCommandInteraction.createImmediateResponder()
                             .setContent("OK")
+                            .setFlags(InteractionCallbackDataFlag.EPHEMERAL)
                             .respond();
                     new MessageBuilder()
                             .setEmbed(ticket.getPanelEmbed().buildEmbed())
@@ -264,11 +267,11 @@ public class Tickets extends Module {
             String value = selectMenuOption.getValue();
             for (Ticket ticket : getSettings().getTickets()) {
                 Optional<Option> optionalOption = ticket.getOption();
-                if (!optionalOption.isPresent())
+                if (optionalOption.isEmpty())
                     continue;
                 Option option = optionalOption.get();
                 if (option.hasEmbed(value)) {
-                    createTicketChannel(user, option.getMenuEmbed(user.getMentionTag(), value), ticket.getType(), ticket.getCategory(), value + "-" + ticket.getType().toLowerCase(), event.getInteraction());
+                    createTicketChannel(user, option.getMenuEmbed(user.getMentionTag(), user.getName(), value), ticket, event.getInteraction());
                     return;
                 }
                 return;
@@ -341,7 +344,7 @@ public class Tickets extends Module {
                                     .addComponents(ActionRow.of(option.getSelectMenu()))
                                     .respond();
                         } else {
-                            createTicketChannel(user, ticket.getTicketEmbed(user.getMentionTag(), user.getName()), ticket.getType(), ticket.getCategory(), ticket.getType().toLowerCase(), event.getInteraction());
+                            createTicketChannel(user, ticket.getTicketEmbed(user.getMentionTag(), user.getName()), ticket, event.getInteraction());
                         }
                         return;
                     }
@@ -350,23 +353,27 @@ public class Tickets extends Module {
         });
     }
 
-    public void createTicketChannel(User user, EmbedBuilder embedBuilder, String categoryName, Long category, String prefix, Interaction interaction) {
-        getInstance().getApi().getServerById(623315891051954217L).ifPresent(server -> server.getChannelCategoryById(category).ifPresent(channelCategory -> server.getRoleById(696078834860032060L).ifPresent(managementRole -> {
-            PermissionsBuilder permissionsBuilder = new PermissionsBuilder()
+    public void createTicketChannel(User user, EmbedBuilder embedBuilder, Ticket ticket, Interaction interaction) {
+        getInstance().getApi().getServerById(623315891051954217L).ifPresent(server -> server.getChannelCategoryById(ticket.getCategory()).ifPresent(channelCategory -> {
+            Permissions permissions = new PermissionsBuilder()
                     .setAllowed(PermissionType.ATTACH_FILE)
                     .setAllowed(PermissionType.ADD_REACTIONS)
                     .setAllowed(PermissionType.READ_MESSAGES)
                     .setAllowed(PermissionType.SEND_MESSAGES)
-                    .setAllowed(PermissionType.READ_MESSAGE_HISTORY);
+                    .setAllowed(PermissionType.READ_MESSAGE_HISTORY)
+                    .build();
 
-            ServerTextChannel serverTextChannel = server.createTextChannelBuilder()
+            ServerTextChannelBuilder serverTextChannelBuilder = server.createTextChannelBuilder()
                     .setCategory(channelCategory)
                     .setAuditLogReason("Created a ticket for " + user.getMentionTag())
-                    .setName(prefix + "-" + user.getName() + "-" + MessageUtils.randomString(6).toLowerCase())
+                    .setName(ticket.getType().toLowerCase() + "-" + user.getName() + "-" + MessageUtils.randomString(6).toLowerCase())
                     .addPermissionOverwrite(server.getEveryoneRole(), new PermissionsBuilder().setAllDenied().build())
-                    .addPermissionOverwrite(managementRole, permissionsBuilder.build())
-                    .addPermissionOverwrite(user, permissionsBuilder.build())
-                    .create().join();
+                    .addPermissionOverwrite(user, permissions);
+
+            for (Long role : ticket.getSupportRoles())
+                server.getRoleById(role).ifPresent(serverRole -> serverTextChannelBuilder.addPermissionOverwrite(serverRole, permissions));
+
+            ServerTextChannel serverTextChannel = serverTextChannelBuilder.create().join();
 
             interaction.createImmediateResponder()
                     .setFlags(InteractionCallbackDataFlag.EPHEMERAL)
@@ -374,15 +381,15 @@ public class Tickets extends Module {
                     .respond();
 
             new MessageBuilder()
-                    .setContent(user.getMentionTag())
+                    .setContent("Hello, " + user.getMentionTag() + ".")
                     .setEmbed(embedBuilder)
                     .addActionRow(Button.success("delete", "Close Ticket"))
                     .send(serverTextChannel);
 
-            getMySQL().getAmountOfRows().whenCompleteAsync((integer, throwable) -> {
-                SQLTicket sqlTicket = new SQLTicket(serverTextChannel.getIdAsString(), String.valueOf(integer + 1), categoryName, user.getName(), user.getIdAsString(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), "OPEN", String.valueOf(Instant.now().getEpochSecond()), "", "", "");
+            getMySQL().getAmountOfTickets().whenCompleteAsync((integer, throwable) -> {
+                SQLTicket sqlTicket = new SQLTicket(serverTextChannel.getIdAsString(), String.valueOf(integer + 1), ticket.getType(), user.getName(), user.getIdAsString(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), "OPEN", String.valueOf(Instant.now().getEpochSecond()), "", "", "");
                 getMySQL().insertTicket(sqlTicket);
             });
-        })));
+        }));
     }
 }

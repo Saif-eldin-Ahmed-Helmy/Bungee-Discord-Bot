@@ -15,27 +15,31 @@ import org.javacord.api.interaction.SlashCommandOptionType;
 
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class BungeeBot extends Plugin {
 
     private static BungeeBot instance;
+
     public static BungeeBot getInstance() {
         return instance;
     }
 
     private Settings settings;
+
     public Settings getSettings() {
         return settings;
     }
 
     private MySQL mySQL;
+
     public MySQL getMySQL() {
         return mySQL;
     }
 
     private DiscordApi api;
+
     public DiscordApi getApi() {
         return api;
     }
@@ -65,29 +69,39 @@ public class BungeeBot extends Plugin {
             getLogger().info("The bot is connected!");
 
             ProxyServer.getInstance().getScheduler().schedule(this,
-                    () -> api.updateActivity(ActivityType.WATCHING, ProxyServer.getInstance().getPlayers().size() + " Players"), 30L, 30L, TimeUnit.SECONDS);
+                    () -> api.updateActivity(ActivityType.WATCHING, ProxyServer.getInstance().getPlayers().size() + " Players"), 1L, 30L, TimeUnit.SECONDS);
 
             api.bulkOverwriteGlobalApplicationCommands(Arrays.asList(
+                            new SlashCommandBuilder().setName("whois").setDescription("See information on user")
+                                    .setOptions(List.of(
+                                            SlashCommandOption.create(SlashCommandOptionType.USER, "user", "The user you want to see information of", false)
+                                    )),
+                            new SlashCommandBuilder().setName("invites").setDescription("Invites Commands")
+                                    .setOptions(List.of(
+                                            SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "list", "List the user invites",
+                                                    List.of(
+                                                            SlashCommandOption.create(SlashCommandOptionType.USER, "user", "The user you want to see the invites of", false)
+                                                    )))),
                             new SlashCommandBuilder().setName("ticket").setDescription("Tickets Commands")
                                     .setOptions(Arrays.asList(
                                             SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "create", "Create a tickets panel",
-                                                    Collections.singletonList(
+                                                    List.of(
                                                             SlashCommandOption.create(SlashCommandOptionType.STRING, "type", "Type of ticket panel", true)
                                                     )),
                                             SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "add", "Add user to the ticket",
-                                                    Collections.singletonList(
+                                                    List.of(
                                                             SlashCommandOption.create(SlashCommandOptionType.USER, "user", "The user you want to add", true)
                                                     )),
                                             SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "remove", "Remove user from the ticket",
-                                                    Collections.singletonList(
+                                                    List.of(
                                                             SlashCommandOption.create(SlashCommandOptionType.USER, "user", "The user you want to remove", true)
                                                     )),
                                             SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "transcript", "Generate ticket transcript",
-                                                    Collections.singletonList(
+                                                    List.of(
                                                             SlashCommandOption.create(SlashCommandOptionType.STRING, "ticket-id", "The id of the ticket", true)
                                                     )))),
                             new SlashCommandBuilder().setName("coupons").setDescription("Coupons commands")
-                                    .setOptions(Collections.singletonList(
+                                    .setOptions(List.of(
                                             SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "create", "Create a store coupon",
                                                     Arrays.asList(
                                                             SlashCommandOption.create(SlashCommandOptionType.LONG, "amount", "The coupon amount", true),
@@ -112,16 +126,16 @@ public class BungeeBot extends Plugin {
                                                     )))),
                             new SlashCommandBuilder().setName("avatar").setDescription("View the avatar of a user")
                                     .setOptions(
-                                            Collections.singletonList(
+                                            List.of(
                                                     SlashCommandOption.create(SlashCommandOptionType.USER, "user", "The discord user", false)
                                             )),
                             new SlashCommandBuilder().setName("clear").setDescription("Delete a certain amount of messages in the channel")
                                     .setOptions(
-                                            Collections.singletonList(
+                                            List.of(
                                                     SlashCommandOption.create(SlashCommandOptionType.LONG, "amount", "The amount of messages you want to delete", true)
                                             )),
                             new SlashCommandBuilder().setName("captcha").setDescription("Captcha commands")
-                                    .setOptions(Collections.singletonList(
+                                    .setOptions(List.of(
                                             SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "create", "Create a captcha panel")
                                     ))))
                     .join();
@@ -136,9 +150,12 @@ public class BungeeBot extends Plugin {
             Coupons coupons = new Coupons(api);
             Embed embed = new Embed(api);
             ExtraLogs extraLogs = new ExtraLogs(api);
+            Invites invites = new Invites(api);
             Tickets tickets = new Tickets(api);
+            WhoIs whoIs = new WhoIs(api);
+
+            getLogger().info("Plugin loaded!");
         });
-        getLogger().info("Plugin loaded!");
     }
 
     @Override

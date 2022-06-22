@@ -5,14 +5,14 @@ import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.castiel.bungeebot.types.Module;
+import me.castiel.bungeebot.types.SQLInviter;
 import me.castiel.bungeebot.types.SQLTicket;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class MySQL extends Module {
@@ -46,6 +46,15 @@ public class MySQL extends Module {
 
             dataSource = new HikariDataSource(config);
             getLogger().info("Connected to the database!");
+
+            execute("CREATE TABLE IF NOT EXISTS INVITESTBL(" +
+                    "ID VARCHAR(18) NOT NULL, " +
+                    "INVITED_BY TEXT NOT NULL, " +
+                    "INVITED_NAMES TEXT NOT NULL, " +
+                    "INVITED_IDS TEXT NOT NULL, " +
+                    "INVITED_JOIN_TIMESTAMPS TEXT NOT NULL, " +
+                    "EXTRA_INVITES INT NOT NULL DEFAULT 0, " +
+                    "PRIMARY KEY(ID))");
 
             execute("CREATE TABLE IF NOT EXISTS TICKETSTBL(" +
                     "ID VARCHAR(18) NOT NULL, " +
@@ -161,7 +170,7 @@ public class MySQL extends Module {
         return completableFuture;
     }
 
-    public CompletableFuture<Integer> getAmountOfRows() {
+    public CompletableFuture<Integer> getAmountOfTickets() {
         CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement
@@ -177,6 +186,64 @@ public class MySQL extends Module {
             e.printStackTrace();
         }
         completableFuture.complete(0);
+        return completableFuture;
+    }
+
+    public void insertInviter(SQLInviter inviter) {
+        Preconditions.checkNotNull(dataSource, "ERROR database session is NULL.");
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement
+                    ("INSERT INTO INVITESTBL " +
+                            "(ID, " +
+                            "INVITED_NAMES, " +
+                            "INVITED_IDS, " +
+                            "INVITED_JOIN_TIMESTAMPS, " +
+                            "EXTRA_INVITES) " +
+                            "VALUES (?, ?, ?, ?, ?) " +
+                            "ON DUPLICATE KEY UPDATE " +
+                            "ID=VALUES(ID), " +
+                            "INVITED_NAMES=VALUES(INVITED_NAMES), " +
+                            "INVITED_IDS=VALUES(INVITED_IDS), " +
+                            "INVITED_JOIN_TIMESTAMPS=VALUES(INVITED_JOIN_TIMESTAMPS), " +
+                            "EXTRA_INVITES=VALUES(EXTRA_INVITES)");
+
+            statement.setString(1, inviter.getId());
+            statement.setString(2, gson.toJson(inviter.getInvitedNames()));
+            statement.setString(3, gson.toJson(inviter.getInvitedIDS()));
+            statement.setString(4, gson.toJson(inviter.getInvitedJoinTimestamps()));
+            statement.setInt(5, inviter.getExtraInvites());
+            statement.execute();
+            statement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public CompletableFuture<SQLInviter> getInviter(String id) {
+        CompletableFuture<SQLInviter> completableFuture = new CompletableFuture<>();
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement
+                    ("SELECT * FROM INVITESTBL WHERE ID=?");
+            statement.setString(1, id);
+            ResultSet set = statement.executeQuery();
+            SQLInviter sqlInviter = null;
+            while (set.next()) {
+                String invitedBy = set.getString("INVITED_BY");
+                LinkedList<String> invitedNames = gson.fromJson(set.getString("INVITED_NAMES"), LinkedList.class);
+                LinkedList<String> invitedIDS = gson.fromJson(set.getString("INVITED_IDS"), LinkedList.class);
+                LinkedList<String> invitedJoinTimeStamps = gson.fromJson(set.getString("INVITED_JOIN_TIMESTAMPS"), LinkedList.class);
+                int extraInvites = set.getInt("EXTRA_INVITES");
+                sqlInviter = new SQLInviter(id, invitedBy, invitedNames, invitedIDS, invitedJoinTimeStamps, extraInvites);
+            }
+            set.close();
+            completableFuture.complete(sqlInviter == null ? new SQLInviter(id, "", new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), 0) : sqlInviter);
+            return completableFuture;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        completableFuture.complete(new SQLInviter(id, "", new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), 0));
         return completableFuture;
     }
 

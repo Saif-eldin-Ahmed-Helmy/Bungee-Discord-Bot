@@ -22,33 +22,39 @@ public class ExtraLogs {
     }
 
     private void createServerJoinsLogger(DiscordApi api) {
-        api.addServerMemberJoinListener(event -> event.getServer().getTextChannelById(652263585363525638L).ifPresent(serverTextChannel -> {
-            if (event.getServer().getId() != 623315891051954217L)
+        api.addServerMemberJoinListener(event -> {
+            Server server = event.getServer();
+            if (server.getId() != 623315891051954217L)
                 return;
-            User user = event.getUser();
-            EmbedBuilder embedBuilder = new EmbedBuilder()
-                    .setColor(Color.GREEN)
-                    .setAuthor(user)
-                    .setTitle("<t:" + Instant.now().getEpochSecond() + ":f>")
-                    .setDescription(user.getMentionTag() + " **has joined the server**")
-                    .setFooter("User ID: " + user.getIdAsString());
-            serverTextChannel.sendMessage(embedBuilder);
-        }));
+            server.getTextChannelById(652263585363525638L).ifPresent(serverTextChannel -> {
+                User user = event.getUser();
+                EmbedBuilder embedBuilder = new EmbedBuilder()
+                        .setColor(Color.GREEN)
+                        .setAuthor(user)
+                        .setTitle("<t:" + Instant.now().getEpochSecond() + ":f>")
+                        .setDescription(user.getMentionTag() + " **has joined the server**")
+                        .setFooter("User ID: " + user.getIdAsString());
+                serverTextChannel.sendMessage(embedBuilder);
+            });
+        });
     }
 
     private void createServerLeavesLogger(DiscordApi api) {
-        api.addServerMemberLeaveListener(event -> event.getServer().getTextChannelById(652263585363525638L).ifPresent(serverTextChannel -> {
-            if (event.getServer().getId() != 623315891051954217L)
+        api.addServerMemberLeaveListener(event -> {
+            Server server = event.getServer();
+            if (server.getId() != 623315891051954217L)
                 return;
-            User user = event.getUser();
-            EmbedBuilder embedBuilder = new EmbedBuilder()
-                    .setColor(Color.RED)
-                    .setAuthor(user)
-                    .setTitle("<t:" + Instant.now().getEpochSecond() + ":f>")
-                    .setDescription(user.getMentionTag() + " **has left the server**")
-                    .setFooter("User ID: " + user.getIdAsString());
-            serverTextChannel.sendMessage(embedBuilder);
-        }));
+            server.getTextChannelById(652263585363525638L).ifPresent(serverTextChannel -> {
+                User user = event.getUser();
+                EmbedBuilder embedBuilder = new EmbedBuilder()
+                        .setColor(Color.RED)
+                        .setAuthor(user)
+                        .setTitle("<t:" + Instant.now().getEpochSecond() + ":f>")
+                        .setDescription(user.getMentionTag() + " **has left the server**")
+                        .setFooter("User ID: " + user.getIdAsString());
+                serverTextChannel.sendMessage(embedBuilder);
+            });
+        });
     }
 
     private void createDiscriminatorLogger(DiscordApi api) {
