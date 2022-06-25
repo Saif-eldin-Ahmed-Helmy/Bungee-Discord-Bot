@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class Tickets extends Module {
 
@@ -175,9 +176,11 @@ public class Tickets extends Module {
             String customId = buttonInteraction.getCustomId();
             Message message = buttonInteraction.getMessage();
             if (customId.startsWith("transcript-")) {
+                System.out.println("1");
                 buttonInteraction.acknowledge();
                 String uid = customId.split("-")[1];
                 getMySQL().getTicket(uid).whenCompleteAsync((sqlTicket, throwable) -> sqlTicket.ifPresent(ticket -> {
+                    System.out.println("12");
                     String password = MessageUtils.randomString(8);
                     ticket.getPasswords().add(password);
                     MessageUpdater messageUpdater = message.createUpdater();
@@ -193,7 +196,7 @@ public class Tickets extends Module {
                             List<LowLevelComponent> lowLevelComponents = actionRow.getComponents();
                             if (!added) {
                                 added = true;
-                                lowLevelComponents.add(Button.secondary("pass-" + uid + "-" + password, user.getName(), "📰"));
+                                lowLevelComponents.add(Button.secondary("pass-" + uid + "-" + password, user.getName(), DiscordUtils.getEmoji("\uD83D\uDCDC")));
                             }
                             messageUpdater.addComponents(ActionRow.of(lowLevelComponents));
                         } else {
@@ -203,13 +206,19 @@ public class Tickets extends Module {
 
                     if (!added && message.getComponents().size() < 5) {
                         added = true;
-                        messageUpdater.addComponents(ActionRow.of(Button.secondary("pass-" + uid + "-" + password, user.getName(), "📰")));
+                        messageUpdater.addComponents(ActionRow.of(Button.secondary("pass-" + uid + "-" + password, user.getName(), DiscordUtils.getEmoji("\uD83D\uDCDC"))));
                     }
 
+                    System.out.println("123");
                     if (!added)
                         return;
 
-                    messageUpdater.applyChanges();
+                    try {
+                        System.out.println(messageUpdater.applyChanges().get().getIdAsString());
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("12345");
                     getMySQL().insertTicket(ticket);
                 }));
             }
@@ -354,7 +363,9 @@ public class Tickets extends Module {
     }
 
     public void createTicketChannel(User user, EmbedBuilder embedBuilder, Ticket ticket, Interaction interaction) {
-        getInstance().getApi().getServerById(623315891051954217L).ifPresent(server -> server.getChannelCategoryById(ticket.getCategory()).ifPresent(channelCategory -> {
+        getInstance().getApi().getServerById(623315891051954217L).ifPresent(server
+                -> server.getChannelCategoryById(ticket.getCategory()).ifPresent(channelCategory
+                -> getMySQL().getAmountOfTickets().whenCompleteAsync((integer, throwable) -> {
             Permissions permissions = new PermissionsBuilder()
                     .setAllowed(PermissionType.ATTACH_FILE)
                     .setAllowed(PermissionType.ADD_REACTIONS)
@@ -366,7 +377,7 @@ public class Tickets extends Module {
             ServerTextChannelBuilder serverTextChannelBuilder = server.createTextChannelBuilder()
                     .setCategory(channelCategory)
                     .setAuditLogReason("Created a ticket for " + user.getMentionTag())
-                    .setName(ticket.getType().toLowerCase() + "-" + user.getName() + "-" + MessageUtils.randomString(6).toLowerCase())
+                    .setName(ticket.getType().toLowerCase() + "-" + user.getName() + "-" + MessageUtils.addPlaceholderZeros(integer, 4))
                     .addPermissionOverwrite(server.getEveryoneRole(), new PermissionsBuilder().setAllDenied().build())
                     .addPermissionOverwrite(user, permissions);
 
@@ -375,10 +386,7 @@ public class Tickets extends Module {
 
             ServerTextChannel serverTextChannel = serverTextChannelBuilder.create().join();
 
-            interaction.createImmediateResponder()
-                    .setFlags(InteractionCallbackDataFlag.EPHEMERAL)
-                    .setContent("Created Ticket! <#" + serverTextChannel.getIdAsString() + ">")
-                    .respond();
+            InteractionOriginalResponseUpdater updater = interaction.respondLater().join();
 
             new MessageBuilder()
                     .setContent("Hello, " + user.getMentionTag() + ".")
@@ -386,10 +394,12 @@ public class Tickets extends Module {
                     .addActionRow(Button.success("delete", "Close Ticket"))
                     .send(serverTextChannel);
 
-            getMySQL().getAmountOfTickets().whenCompleteAsync((integer, throwable) -> {
-                SQLTicket sqlTicket = new SQLTicket(serverTextChannel.getIdAsString(), String.valueOf(integer + 1), ticket.getType(), user.getName(), user.getIdAsString(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), "OPEN", String.valueOf(Instant.now().getEpochSecond()), "", "", "");
-                getMySQL().insertTicket(sqlTicket);
-            });
-        }));
+            updater.setFlags(InteractionCallbackDataFlag.EPHEMERAL)
+                    .setContent("Created Ticket! <#" + serverTextChannel.getIdAsString() + ">")
+                    .update();
+
+            SQLTicket sqlTicket = new SQLTicket(serverTextChannel.getIdAsString(), String.valueOf(integer + 1), ticket.getType(), user.getName(), user.getIdAsString(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), "OPEN", String.valueOf(Instant.now().getEpochSecond()), "", "", "");
+            getMySQL().insertTicket(sqlTicket);
+        })));
     }
 }

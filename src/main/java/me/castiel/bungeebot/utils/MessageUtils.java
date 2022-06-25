@@ -40,4 +40,12 @@ public final class MessageUtils {
         }
         return captchaStringBuffer.toString();
     }
+
+    public static String addPlaceholderZeros(Integer number, int amount) {
+        StringBuilder string = new StringBuilder(number.toString());
+        for (int i = string.length(); i < amount; i++) {
+            string.insert(0, "0");
+        }
+        return string.toString();
+    }
 }

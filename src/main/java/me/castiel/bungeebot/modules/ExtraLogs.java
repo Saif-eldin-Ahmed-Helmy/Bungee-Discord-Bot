@@ -137,7 +137,9 @@ public class ExtraLogs {
             User user = event.getUser();
             if (user.isBot())
                 return;
-            api.getServerById(623315891051954217L).flatMap(server -> server.getTextChannelById(652263585363525638L)).ifPresent(serverTextChannel -> {
+            api.getServerById(623315891051954217L).ifPresent(server -> server.getTextChannelById(652263585363525638L).ifPresent(serverTextChannel -> {
+                if (server.getId() != 623315891051954217L)
+                    return;
                 MessageBuilder messageBuilder = new MessageBuilder();
                 EmbedBuilder mainEmbed = new EmbedBuilder()
                         .setColor(Color.WHITE)
@@ -160,7 +162,7 @@ public class ExtraLogs {
                     messageBuilder.addEmbed(newAvatarEmbed);
                 });
                 messageBuilder.send(serverTextChannel);
-            });
+            }));
         });
     }
 
@@ -168,7 +170,7 @@ public class ExtraLogs {
         api.addMessageEditListener(event -> event.getServer().ifPresent(server -> event.getServerTextChannel()
                 .ifPresent(serverTextChannel -> event.getMessage().ifPresent(message -> event.getOldContent()
                         .ifPresent(oldContent -> event.getMessageAuthor().ifPresent(messageAuthor -> {
-                            if (!messageAuthor.isRegularUser())
+                            if (server.getId() != 623315891051954217L || !messageAuthor.isRegularUser())
                                 return;
                             EmbedBuilder mainEmbed = new EmbedBuilder()
                                     .setColor(Color.WHITE)
@@ -194,7 +196,7 @@ public class ExtraLogs {
         api.addMessageDeleteListener(event -> event.getServer().ifPresent(server -> event.getServerTextChannel()
                 .ifPresent(serverTextChannel -> event.getMessage().ifPresent(message -> event.getMessageAuthor()
                         .ifPresent(messageAuthor -> {
-                            if (!messageAuthor.isRegularUser())
+                            if (server.getId() != 623315891051954217L || !messageAuthor.isRegularUser())
                                 return;
                             EmbedBuilder mainEmbed = new EmbedBuilder()
                                     .setColor(Color.WHITE)
