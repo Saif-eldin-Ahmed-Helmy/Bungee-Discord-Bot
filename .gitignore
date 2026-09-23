@@ -1,0 +1,14 @@
+.devagent/
+.agents/
+.codex/
+.gemini/
+.config/
+.env
+.env.*
+.gradle/
+.idea/
+.vscode/
+build/
+out/
+*.iml
+*.log

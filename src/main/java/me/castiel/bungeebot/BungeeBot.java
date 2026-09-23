@@ -44,6 +44,14 @@ public class BungeeBot extends Plugin {
         return api;
     }
 
+    private static String requiredEnv(String name) {
+        String value = System.getenv(name);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(name + " is not configured");
+        }
+        return value;
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -52,7 +60,12 @@ public class BungeeBot extends Plugin {
 
             getLogger().info("Connecting to MySQL Database...");
 
-            mySQL = new MySQL(System.getenv("BUNGEE_DB_HOST"), System.getenv("BUNGEE_DB_PORT"), System.getenv("BUNGEE_DB_USER"), System.getenv("BUNGEE_DB_PASSWORD"), System.getenv("BUNGEE_DB_NAME"));
+            mySQL = new MySQL(
+                    requiredEnv("BUNGEE_DB_HOST"),
+                    requiredEnv("BUNGEE_DB_PORT"),
+                    requiredEnv("BUNGEE_DB_USER"),
+                    requiredEnv("BUNGEE_DB_PASSWORD"),
+                    requiredEnv("BUNGEE_DB_NAME"));
 
             getLogger().info("Logging in...");
 

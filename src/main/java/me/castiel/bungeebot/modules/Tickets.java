@@ -300,13 +300,16 @@ public class Tickets extends Module {
                         .addComponents(ActionRow.of(DiscordUtils.disableAllButtons(message.getComponents())))
                         .applyChanges();
                 buttonInteraction.createImmediateResponder()
-                        .setContent("The ticket is being archived...")
+                        .setContent("The ticket is being closed...")
                         .respond();
                 event.getButtonInteraction().getServer().ifPresent(server -> event.getButtonInteraction().getChannel().flatMap(textChannel -> server.getTextChannelById(textChannel.getId())).ifPresent(serverTextChannel -> server.getTextChannelById(912822165945085963L).ifPresent(transcriptsChannel -> {
                     HashMap<String, String> keys = new HashMap<>();
                     keys.put("cid", serverTextChannel.getIdAsString());
-                    keys.put("token", getSettings().getToken());
-                    HttpUtils.sendPostRequest("https://transcripts.tea-mc.com/api/api.php", keys);
+                    String archiveToken = System.getenv("TRANSCRIPT_API_TOKEN");
+                    if (archiveToken != null && !archiveToken.isBlank()) {
+                        keys.put("token", archiveToken);
+                        HttpUtils.sendPostRequest("https://transcripts.tea-mc.com/api/api.php", keys);
+                    }
 
                     serverTextChannel.delete("Ticket closed by " + user.getName());
 
@@ -314,7 +317,7 @@ public class Tickets extends Module {
 
                         EmbedBuilder embedBuilder = new EmbedBuilder()
                                 .setAuthor(user.getName(), "", user.getAvatar())
-                                .setDescription("**:x: Ticket closed by " + user.getMentionTag() + "**\n``The ticket has been closed and a transcript of the chat has been archived.``")
+                                .setDescription("**:x: Ticket closed by " + user.getMentionTag() + "**")
                                 .addField("Ticket Name", serverTextChannel.getName())
                                 .addField("Ticket Category", ticket.getCategory())
                                 .addField("Ticket Open Date", "<t:" + ticket.getOpenDate() + ":f>")
