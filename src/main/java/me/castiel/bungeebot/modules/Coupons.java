@@ -32,7 +32,14 @@ public class Coupons {
                 String reason = slashCommandInteraction.getArguments().get(1).getStringValue().orElse("N/A");
 
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("X-Tebex-Secret", "***REMOVED***");
+                String tebexSecret = System.getenv("TEBEX_SECRET");
+                if (tebexSecret == null || tebexSecret.isBlank()) {
+                    slashCommandInteraction.createImmediateResponder()
+                            .setContent("Coupon integration is not configured.")
+                            .respond();
+                    return;
+                }
+                headers.put("X-Tebex-Secret", tebexSecret);
                 headers.put("Content-Type", "application/x-www-form-urlencoded");
 
                 String body = "code=" + code +

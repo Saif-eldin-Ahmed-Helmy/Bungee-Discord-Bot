@@ -24,7 +24,7 @@ public class Settings {
     public Settings() {
         Configuration config = YamlUtils.loadConfig("config.yml");
         assert config != null;
-        token = config.getString("Token");
+        token = requiredEnv("DISCORD_BOT_TOKEN");
         questions = new ArrayList<>();
         Configuration questionsSection = config.getSection("Auto-Helper.Questions");
         for (String _question : questionsSection.getKeys()) {
@@ -84,6 +84,14 @@ public class Settings {
         whitelistedDomains = config.getStringList("Auto-Mod.Whitelisted.Domains");
         blacklistedPages = config.getStringList("Auto-Mod.Blacklisted.Pages");
         blacklistedWords = config.getStringList("Auto-Mod.Blacklisted.Words");
+    }
+
+    private static String requiredEnv(String name) {
+        String value = System.getenv(name);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(name + " is not configured");
+        }
+        return value;
     }
 
     public String getToken() {
